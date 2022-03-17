@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Core.IoC
+namespace Core.Utilities.IoC
 {
     public static class ServiceTool
     {
@@ -12,6 +12,7 @@ namespace Core.IoC
         public static IServiceCollection Create(IServiceCollection services)
         {
             ServiceProvider = services.BuildServiceProvider();
+            
             return services;
         }
     }

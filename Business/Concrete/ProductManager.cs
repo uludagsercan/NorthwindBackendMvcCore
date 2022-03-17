@@ -16,6 +16,9 @@ using Core.Aspects.Autofac.Validation;
 using Business.CCS;
 using Core.Utilities.Business;
 using Business.BusinessAspects.Autofac;
+using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Transaction;
+using Core.Aspects.Autofac.Performance;
 
 namespace Business.Concrete
 {
@@ -30,8 +33,9 @@ namespace Business.Concrete
 
         }
         //Claim
-        [SecuredOperation("")]    
+        //[SecuredOperation("product.add,admin")]    
         [ValidationAspect(typeof(ProductValidator))]
+        [CacheRemoveAspect("IProductService.Get")]
         public IResult Add(Product product)
         {
            IResult result= BusinessRules.Run(CheckIfProductCountOfCategoryCorrect(product.CategoryId),
@@ -50,6 +54,8 @@ namespace Business.Concrete
             return new Result(true, "Urün silindi");
         }
 
+        [CacheAspect]
+        //[PerformanceAspect(5)]
         public IDataResult<List<Product>> GetAll()
         {
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(), Messages.ProductListed);
@@ -64,7 +70,7 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(x => x.UnitPrice >= min && x.UnitPrice <= max), "Fiyatlar Listelendi");
         }
-
+        [CacheAspect]
         public IDataResult<Product> GetByProductId(int id)
         {
             return new SuccessDataResult<Product>(_productDal.Get(x => x.ProductId == id), Messages.ProductListed);
@@ -74,7 +80,8 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<List<ProductDetailDto>>(_productDal.GetProductDetails(), "ürünler listelendi");
         }
-
+        [CacheRemoveAspect("IProductService.Get")]
+        [TransactionScopeAspect]
         public IResult Update(Product product)
         {
             _productDal.Update(product);
@@ -99,6 +106,7 @@ namespace Business.Concrete
             }
             return new SuccessResult();
         }
+
         private IResult CheckIfCategoryLimitExceded()
         {
             var result = _categoryService.GetAll();

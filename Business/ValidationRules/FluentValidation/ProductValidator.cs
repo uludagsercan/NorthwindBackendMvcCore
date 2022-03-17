@@ -16,7 +16,7 @@ namespace Business.ValidationRules.FluentValidation
             RuleFor(x => x.UnitsInStock).NotEmpty().WithMessage("Ürün stok alanı boş geçilemez.");
             RuleFor(x => x.ProductName).MaximumLength(40).WithMessage("Lütfen ürün ismini 40 karakterden fazla girmeyiniz.");
             RuleFor(x => x.ProductName).MinimumLength(2).WithMessage("Lütfen ürün ismini en az 2 karakter giriniz.");
-            RuleFor(x => x.ProductName).Must(StartWithA);
+           // RuleFor(x => x.ProductName).Must(StartWithA);
         }
 
         public bool StartWithA(string parameter)
